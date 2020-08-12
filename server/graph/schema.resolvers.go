@@ -16,7 +16,18 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+	var links []*model.Todo
+	dummyTodo := model.Todo{
+		ID: "hogehoge",
+		Text: "Dummy",
+		Done:false,
+		User: &model.User{
+			ID:"hogehgoe",
+			Name: "namename",
+		},
+	}
+	todos := append(links, &dummyTodo)
+	return todos, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
