@@ -7,27 +7,30 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/kkmmttdd/bff-graphql-to-grpc-golang/adapter/grpc/todo"
+	grpc_client "github.com/kkmmttdd/bff-graphql-to-grpc-golang/client/grpc"
+	client "github.com/kkmmttdd/bff-graphql-to-grpc-golang/client/grpc/todo"
 	"github.com/kkmmttdd/bff-graphql-to-grpc-golang/server/graph/generated"
 	"github.com/kkmmttdd/bff-graphql-to-grpc-golang/server/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) CreateTodo(ctx context.Context, input model.CreateTodo) (*model.Todo, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	var links []*model.Todo
-	dummyTodo := model.Todo{
-		ID: "hogehoge",
-		Text: "Dummy",
-		Done:false,
-		User: &model.User{
-			ID:"hogehgoe",
-			Name: "namename",
-		},
+func (r *queryResolver) TodoList(ctx context.Context) ([]*model.Todo, error) {
+	grpcReq := grpc_client.TodoListRequest{}
+	grpcRes := grpc_client.TodoListResponse{}
+	grpc_client.DoClient(client.List, client.ListOption{
+		TodoListRequest:  &grpcReq,
+		TodoListResponse: &grpcRes,
+	})
+	fmt.Println("%d", len(grpcRes.Todos))
+	var res []*model.Todo
+	for _, gRes := range grpcRes.Todos {
+		res = append(res, todo.GrpcToGraph(gRes))
 	}
-	todos := append(links, &dummyTodo)
-	return todos, nil
+	return res, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package grpc;
+option go_package = "grpc";
+
+message Todo {
+  string text = 1;
+}
+
+message TodoListRequest {
+}
+
+message TodoListResponse {
+  repeated Todo todos = 1;
+}
+
+message TodoCreateRequest {
+  Todo todo = 1;
+}
+
+message TodoCreateResponse {
+  bool valid = 1;
+  string message = 2;
+}
+
+service TodoService {
+  rpc TodoList (TodoListRequest) returns (TodoListResponse);
+  rpc TodoCreate (TodoCreateRequest) returns (TodoCreateResponse);
+}
